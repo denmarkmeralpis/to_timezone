@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'tzs'
-require 'active_support/core_ext/time'
+require_relative "tzs"
+require "active_support/core_ext/time"
+require "active_support/core_ext/string/zones"
 
 module ToTimezone
   module TzExt
     ToTimezone::Tzs::TIMEZONES.each do |abbr, timezone|
       define_method("to_#{abbr}") do
-        self.utc.in_time_zone(timezone)
+        utc.in_time_zone(timezone)
       end
     end
   end
@@ -20,6 +21,14 @@ end
 
 class DateTime
   include ToTimezone::TzExt
+end
+
+class String
+  include ToTimezone::TzExt
+
+  def utc
+    in_time_zone("UTC")
+  end
 end
 
 # Explicitly patch ActiveSupport::TimeWithZone
