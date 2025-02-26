@@ -38,6 +38,12 @@ manila_time = current_time.to_pht  # => Asia/Manila time zone
 puts manila_time # => 2025-02-07 10:53:47.355858000 PST +08:00
 ```
 
+or with Strings:
+
+```ruby
+pht = "2014-07-05 14:30:00".to_ph
+puts pht # => 2014-07-05 14:30:00 +08:00
+```
 ### Supported Timezones:
 
 | Method            | Timezone Name                  |
