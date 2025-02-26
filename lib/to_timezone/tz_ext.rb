@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
-require_relative 'tzs'
-require 'active_support/core_ext/time'
+require_relative "tzs"
+require "active_support/core_ext/time"
 
 module ToTimezone
   module TzExt
     ToTimezone::Tzs::TIMEZONES.each do |abbr, timezone|
       define_method("to_#{abbr}") do
-        self.utc.in_time_zone(timezone)
+        time = is_a?(String) ? Time.parse(self) : self
+        time.utc.in_time_zone(timezone)
       end
     end
   end
@@ -19,6 +20,10 @@ class Time
 end
 
 class DateTime
+  include ToTimezone::TzExt
+end
+
+class String
   include ToTimezone::TzExt
 end
 
