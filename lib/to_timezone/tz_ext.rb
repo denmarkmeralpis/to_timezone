@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative "tzs"
+require_relative 'tzs'
 require 'active_support'
-require "active_support/core_ext/time"
-require "active_support/core_ext/string/zones"
+require 'active_support/core_ext/time'
+require 'active_support/core_ext/string/zones'
 
 module ToTimezone
   module TzExt
