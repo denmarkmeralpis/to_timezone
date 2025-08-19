@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "tzs"
+require 'active_support'
 require "active_support/core_ext/time"
 require "active_support/core_ext/string/zones"
 
@@ -8,7 +9,11 @@ module ToTimezone
   module TzExt
     ToTimezone::Tzs::TIMEZONES.each do |abbr, timezone|
       define_method("to_#{abbr}") do
-        utc.in_time_zone(timezone)
+        if is_a?(DateTime)
+          to_time.in_time_zone(timezone)
+        else
+          in_time_zone(timezone)
+        end
       end
     end
   end
@@ -25,10 +30,6 @@ end
 
 class String
   include ToTimezone::TzExt
-
-  def utc
-    in_time_zone("UTC")
-  end
 end
 
 # Explicitly patch ActiveSupport::TimeWithZone
