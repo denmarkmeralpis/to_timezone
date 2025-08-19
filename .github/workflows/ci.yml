@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '*.*.*'
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: ruby:3.1-alpine
+    steps:
+      - name: Install dependencies
+        run: apk add --no-cache build-base git libffi-dev yaml-dev tzdata
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Bundler
+        run: gem install bundler
+
+      - name: Install gems
+        run: bundle install
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: test
+    runs-on: ubuntu-latest
+    container:
+      image: ruby:3.1-alpine
+    steps:
+      - name: Install dependencies
+        run: apk add --no-cache build-base git libffi-dev yaml-dev
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Bundler
+        run: gem install bundler
+
+      - name: Install gems
+        run: bundle install
+
+      - name: Build gem
+        run: gem build *.gemspec
+
+      - name: Check gem version matches tag
+        run: |
+          TAG_VERSION="${GITHUB_REF##refs/tags/}"
+          GEM_VERSION=$(ruby -e "spec = Gem::Specification.load(Dir.glob('*.gemspec').first); puts spec.version")
+          if [ "$TAG_VERSION" != "$GEM_VERSION" ]; then
+            echo "Tag version ($TAG_VERSION) does not match gemspec version ($GEM_VERSION)"
+            exit 1
+          fi
+
+      - name: Push to RubyGems
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+        run: |
+          mkdir -p ~/.gem
+          echo -e "---\n:rubygems_api_key: $RUBYGEMS_API_KEY\n" > ~/.gem/credentials
+          chmod 0600 ~/.gem/credentials
+          gem push *.gem
