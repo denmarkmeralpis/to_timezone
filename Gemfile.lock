@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    to_timezone (0.2.3)
+    to_timezone (0.3.0)
       activesupport (>= 6.0)
 
 GEM
