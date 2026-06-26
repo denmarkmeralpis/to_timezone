@@ -12,10 +12,10 @@ module ToTimezone
     end
   end
 
-  # DateTime#in_time_zone requires a prior to_time conversion.
+  # DateTime supports in_time_zone directly in ActiveSupport 7.x+.
   module TzExtDateTime
     ToTimezone::Tzs::TIMEZONES.each do |abbr, timezone|
-      define_method(:"to_#{abbr}") { to_time.in_time_zone(timezone) }
+      define_method(:"to_#{abbr}") { in_time_zone(timezone) }
     end
   end
 end
