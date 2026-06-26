@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = 'Adds intuitive time zone conversion methods to Time and DateTime in Rails, allowing calls like `.to_pht`, `.to_ict`, and more for effortless time zone handling.'
   spec.homepage = 'https://github.com/denmarkmeralpis/to_timezone.git'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 2.5.0'
+  spec.required_ruby_version = '>= 2.7.0'
 
   spec.metadata['allowed_push_host'] = 'https://rubygems.org'
   spec.metadata['homepage_uri'] = spec.homepage

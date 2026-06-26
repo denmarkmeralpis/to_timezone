@@ -1,38 +1,37 @@
 # frozen_string_literal: true
 
 require_relative 'tzs'
-require 'active_support'
-require 'active_support/core_ext/time'
+require 'active_support/time'
 require 'active_support/core_ext/string/zones'
 
 module ToTimezone
+  # For Time, String, and ActiveSupport::TimeWithZone — all support in_time_zone directly.
   module TzExt
     ToTimezone::Tzs::TIMEZONES.each do |abbr, timezone|
-      define_method("to_#{abbr}") do
-        if is_a?(DateTime)
-          to_time.in_time_zone(timezone)
-        else
-          in_time_zone(timezone)
-        end
-      end
+      define_method(:"to_#{abbr}") { in_time_zone(timezone) }
+    end
+  end
+
+  # DateTime#in_time_zone requires a prior to_time conversion.
+  module TzExtDateTime
+    ToTimezone::Tzs::TIMEZONES.each do |abbr, timezone|
+      define_method(:"to_#{abbr}") { to_time.in_time_zone(timezone) }
     end
   end
 end
 
-# Extend Time and DateTime
 class Time
   include ToTimezone::TzExt
 end
 
 class DateTime
-  include ToTimezone::TzExt
+  include ToTimezone::TzExtDateTime
 end
 
 class String
   include ToTimezone::TzExt
 end
 
-# Explicitly patch ActiveSupport::TimeWithZone
 if defined?(ActiveSupport::TimeWithZone)
   class ActiveSupport::TimeWithZone
     include ToTimezone::TzExt
