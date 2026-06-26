@@ -7,13 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- Split `TzExt` into two modules — `TzExt` (Time, String, ActiveSupport::TimeWithZone) and `TzExtDateTime` (DateTime) — eliminating the `is_a?(DateTime)` runtime branch from every method call
-- Replaced `require 'active_support'` + `require 'active_support/core_ext/time'` with the targeted `require 'active_support/time'`, reducing load overhead in standalone (non-Rails) usage
-- Method names in `define_method` now use symbols (`:"to_#{abbr}"`) instead of strings, skipping the string-to-symbol intern step at load time
+## [0.4.1] - 2026-06-26
 
 ### Fixed
-- Minimum Ruby version raised from `2.5.0` to `2.7.0`; Ruby 2.5 and 2.6 reached end-of-life in March 2021 and March 2022 respectively
+- Replaced `to_time.in_time_zone(timezone)` with `in_time_zone(timezone)` in `TzExtDateTime` to resolve `NoMethodError: undefined method 'deprecator' for ActiveSupport:Module` raised by ActiveSupport 7.2, which deprecated `DateTime#to_time`
 
 ## [0.4.0] - 2026-06-26
 
